@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 sha1 = "0.10.6"
 git2 = { version = "0.18.3", default-features = false }
+num_cpus = "1.0"
