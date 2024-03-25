@@ -1,3 +1,4 @@
+use std::env;
 use std::fmt::Write;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -39,6 +40,19 @@ fn show_commit(commit: &Commit, buffer: &mut String) -> std::fmt::Result {
 }
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let target: Vec<u8> = args
+        .get(1)
+        .map(|s| {
+            s.chars()
+                .map(|c| {
+                    u8::from_str_radix(&c.to_string(), 16)
+                        .expect(&format!("Wrong input {} in {}", c, s))
+                })
+                .collect()
+        })
+        .unwrap_or(vec![0; 7]);
+
     let repo = Repository::open(".").unwrap();
     let head_commit = repo.head().unwrap().peel_to_commit().unwrap();
 
@@ -52,6 +66,7 @@ fn main() {
     for tid in 0..t_num {
         let answer = answer.clone();
         let orig = buffer.clone();
+        let target = target.clone();
         let h = thread::spawn(move || {
             let [part1, part2] = orig
                 .split("committer ")
@@ -82,8 +97,8 @@ fn main() {
                     .into_iter()
                     .map(|v| [v / 16, v % 16])
                     .flatten()
-                    .take(7)
-                    .all(|v| v == 0)
+                    .zip(&target)
+                    .all(|(a, &b)| a == b)
                 {
                     *answer.lock().unwrap() = Some(name_pre);
                 }
@@ -108,5 +123,5 @@ fn main() {
     let oid = head_commit
         .amend(Some("HEAD"), None, Some(&new_committer), None, None, None)
         .unwrap();
-    println!("Done, new commit hash {}", oid);
+    println!("Done, new commit hash: {}", oid);
 }
