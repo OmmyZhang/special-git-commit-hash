@@ -39,9 +39,9 @@ fn show_commit(commit: &Commit, buffer: &mut String) -> std::fmt::Result {
     Ok(())
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let target: Vec<u8> = args
+fn get_target_from_args() -> Vec<u8> {
+    env::args()
+        .collect::<Vec<String>>()
         .get(1)
         .map(|s| {
             s.chars()
@@ -51,7 +51,11 @@ fn main() {
                 })
                 .collect()
         })
-        .unwrap_or(vec![0; 7]);
+        .unwrap_or(vec![0; 7])
+}
+
+fn main() {
+    let target = get_target_from_args();
 
     let repo = Repository::open(".").unwrap();
     let head_commit = repo.head().unwrap().peel_to_commit().unwrap();
@@ -79,8 +83,6 @@ fn main() {
                 }
 
                 let name_pre = format!("{}{:x}_", (tid as u8 + 65) as char, i);
-                // println!("{}", name_pre);
-
                 let full = format!(
                     "commit {}\0{}committer {}{}",
                     orig.len() + name_pre.len(),
@@ -88,7 +90,6 @@ fn main() {
                     name_pre,
                     part2
                 );
-                // println!("{}", full);
 
                 let mut hasher = Sha1::new();
                 hasher.update(full.as_bytes());
@@ -106,7 +107,6 @@ fn main() {
         });
         handles.push(h);
     }
-
     for handle in handles {
         handle.join().unwrap();
     }
@@ -115,7 +115,7 @@ fn main() {
         .unwrap()
         .into_inner()
         .unwrap()
-        .expect("Can't found");
+        .expect("Can't find");
     let committer = head_commit.committer();
     let new_name = format!("{}{}", name_pre, committer.name().unwrap());
     let new_committer =
