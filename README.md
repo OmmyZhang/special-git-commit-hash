@@ -7,11 +7,27 @@ A command line tool for generating commit hashes with specified prefixes.
 - Using libgit2 API instead of calling `git xxx` commands
 - Using multiple threads
 
-## Installation [![Crates.io Version](https://img.shields.io/crates/v/special-git-commit.svg)](https://crates.io/crates/special-git-commit)
+## Installation
+
+### Cargo install [![Crates.io Version](https://img.shields.io/crates/v/special-git-commit.svg)](https://crates.io/crates/special-git-commit)
 
 ```
 cargo install special-git-commit
 ```
+
+### Build from source
+
+```
+git clone https://github.com/OmmyZhang/special-git-commit-hash.git
+cd special-git-commit-hash
+cargo build --release
+```
+
+### Download from releases [![Release](https://github.com/OmmyZhang/special-git-commit-hash/actions/workflows/release.yml/badge.svg)](https://github.com/OmmyZhang/special-git-commit-hash/actions/workflows/release.yml)
+
+Executable files for Linux, Mac and Windows.
+
+[Releases](https://github.com/OmmyZhang/special-git-commit-hash/releases)
 
 ## Usage
 
